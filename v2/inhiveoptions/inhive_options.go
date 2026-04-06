@@ -166,7 +166,7 @@ func GetOverridableInhiveOptions(overrides map[string][]string) *InhiveOptions {
 
 	// Use reflection to iterate over the fields of InhiveOptions
 	v := reflect.ValueOf(&overrideHiddify).Elem()
-	t := reflect.TypeOf(overrideHiddify)
+	t := v.Type()
 
 	// Recursively set the fields that are marked as overridable
 	setOverridableFields(v, t, nestedOverrides)
