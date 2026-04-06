@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/hiddify/inhive.ru/refs/heads/main/docs/assets/hiddify-app-logo.svg" alt="InHive Logo" width="128">
+  <img src="https://raw.githubusercontent.com/buudesh/inhive-core/main/assets/logo.svg" alt="InHive Logo" width="128">
 </p>
 
 <h1 align="center">InHive Core</h1>
@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="https://inhive.ru"><img src="https://img.shields.io/badge/Website-inhive.ru-blue?style=flat-square" alt="Website"></a>
-  <a href="https://t.me/hiddify"><img src="https://img.shields.io/badge/Telegram-Join-blue?style=flat-square&logo=telegram" alt="Telegram"></a>
+  <a href="https://t.me/inhive_bot"><img src="https://img.shields.io/badge/Telegram-Join-blue?style=flat-square&logo=telegram" alt="Telegram"></a>
   <img src="https://img.shields.io/github/license/hiddify/inhive-core?style=flat-square" alt="License">
   <img src="https://img.shields.io/github/v/release/hiddify/inhive-core?style=flat-square" alt="Version">
 </p>
@@ -23,7 +23,7 @@
 Install `inhive-core` on any Linux platform (Ubuntu, Debian, CentOS, OpenWrt, and more) with a single command:
 
 ```bash
-bash <(curl https://i.inhive.ru/core)
+bash <(curl https://raw.githubusercontent.com/buudesh/inhive-core/main/installer.sh)
 ```
 or 
 ```bash
@@ -52,10 +52,10 @@ Quickly deploy as a containerized service:
 
 ```bash
 # Pull image
-docker pull ghcr.io/hiddify/inhive-core:latest
+docker pull ghcr.io/buudesh/inhive-core:latest
 
 # Or using Docker Compose
-git clone https://github.com/hiddify/inhive-core
+git clone https://github.com/buudesh/inhive-core
 cd inhive-core/docker
 docker-compose up -d
 ```
@@ -67,26 +67,26 @@ For manual installation or advanced configuration on OpenWrt, refer to our [Open
 
 ## Extension
 
-An extension is something that can be added to hiddify application by a third party. It will add capability to modify configs, do some extra action, show and receive data from users.
+An extension is something that can be added to InHive application by a third party. It will add capability to modify configs, do some extra action, show and receive data from users.
 
 This extension will be shown in all InHive Platforms such as Android/macOS/Linux/Windows/iOS
 
-[Create an extension](https://github.com/hiddify/hiddify-app-example-extension)
+[Create an extension](https://github.com/buudesh/inhive-extension-example)
 
 Features and Road map:
 
 - [x] Add Third Party Extension capability
 - [x] Test Extension from Browser without any dependency to android/mac/.... `./cmd.sh extension` the open browser `https://127.0.0.1:12346`
-- [x] Show Custom UI from Extension `github.com/hiddify/inhive-core/extension.UpdateUI()` 
-- [x] Show Custom Dialog from Extension `github.com/hiddify/inhive-core/extension.ShowDialog()`
-- [x] Show Alert Dialog from Extension `github.com/hiddify/inhive-core/extension.ShowMessage()` 
-- [x] Get Data from UI `github.com/hiddify/inhive-core/extension.SubmitData()` 
+- [x] Show Custom UI from Extension `github.com/buudesh/inhive-core/extension.UpdateUI()` 
+- [x] Show Custom Dialog from Extension `github.com/buudesh/inhive-core/extension.ShowDialog()`
+- [x] Show Alert Dialog from Extension `github.com/buudesh/inhive-core/extension.ShowMessage()` 
+- [x] Get Data from UI `github.com/buudesh/inhive-core/extension.SubmitData()` 
 - [x] Save Extension Data from `e.Base.Data`
 - [x] Load Extension Data to `e.Base.Data`
 - [x] Disable / Enable Extension 
-- [x] Update user proxies before connecting `github.com/hiddify/inhive-core/extension.BeforeAppConnect()` 
-- [x] Run Tiny Independent Instance  `github.com/hiddify/inhive-core/extension/sdk.RunInstance()` 
-- [x] Parse Any type of configs/url  `github.com/hiddify/inhive-core/extension/sdk.ParseConfig()` 
+- [x] Update user proxies before connecting `github.com/buudesh/inhive-core/extension.BeforeAppConnect()` 
+- [x] Run Tiny Independent Instance  `github.com/buudesh/inhive-core/extension/sdk.RunInstance()` 
+- [x] Parse Any type of configs/url  `github.com/buudesh/inhive-core/extension/sdk.ParseConfig()` 
 - [ ] ToDo: Add Support for MultiLanguage Interface
 - [ ] ToDo: Custom Extension Outbound
 - [ ] ToDo: Custom Extension Inbound
