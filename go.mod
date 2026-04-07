@@ -280,16 +280,16 @@ replace github.com/sagernet/sing-dns => github.com/shtorm-7/sing-dns v0.4.6-exte
 
 replace github.com/ameshkov/dnscrypt/v2 => github.com/shtorm-7/dnscrypt/v2 v2.4.0-extended-1.0.0
 
-replace github.com/hiddify/ray2sing => ./ray2sing
+replace github.com/hiddify/ray2sing => ./inhive-ray2sing
 
-replace github.com/sagernet/sing-box => ./hiddify-sing-box
+replace github.com/sagernet/sing-box => ./sing-box
 
-replace github.com/sagernet/wireguard-go => ./hiddify-sing-box/replace/wireguard-go
+replace github.com/sagernet/wireguard-go => ./sing-box/replace/wireguard-go
 
-replace github.com/sagernet/tailscale => ./hiddify-sing-box/replace/tailscale
+replace github.com/sagernet/tailscale => ./sing-box/replace/tailscale
 
-replace github.com/Psiphon-Labs/quic-go => ./hiddify-sing-box/replace/psiphon-quic-go
+replace github.com/Psiphon-Labs/quic-go => ./sing-box/replace/psiphon-quic-go
 
-replace github.com/Psiphon-Labs/psiphon-tls => ./hiddify-sing-box/replace/psiphon-tls
+replace github.com/Psiphon-Labs/psiphon-tls => ./sing-box/replace/psiphon-tls
 
 replace github.com/net2share/vaydns => github.com/hiddify/vaydns v0.0.0-20260401180616-890dc987a6a9

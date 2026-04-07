@@ -53,7 +53,7 @@ docker-compose up -d
 ```
 
 ### OpenWrt
-For manual installation or advanced configuration on OpenWrt, refer to our [OpenWrt Setup Guide](platform/wrt/README.md).
+Install via the universal installer script — it auto-detects OpenWrt and configures procd service.
 
 ---
 

@@ -30,7 +30,7 @@ func printVersion(cmd *cobra.Command, args []string) {
 		os.Stdout.WriteString(C.Version + "\n")
 		return
 	}
-	version := "inhive-core version " + HC.Version + " hiddify-sing-box version " + C.Version + "\n\n"
+	version := "inhive-core version " + HC.Version + " sing-box version " + C.Version + "\n\n"
 	version += "Environment: " + runtime.Version() + " " + runtime.GOOS + "/" + runtime.GOARCH + "\n"
 
 	var tags string
