@@ -15,4 +15,4 @@ data
 **/*.syso
 node_modules
 *.db
-*.json
+*.jsonpackage-lock.json
