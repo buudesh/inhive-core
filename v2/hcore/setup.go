@@ -4,6 +4,7 @@ package hcore
 import (
 	"context"
 
+	"github.com/buudesh/inhive-core/v2/config"
 	"github.com/buudesh/inhive-core/v2/hcommon"
 	"github.com/buudesh/inhive-core/v2/service_manager"
 )
@@ -20,11 +21,16 @@ func InitHiddifyService() error {
 	return service_manager.StartServices()
 }
 
-func (s *CoreService) Setup(ctx context.Context, req *SetupRequest) (*hcommon.Response, error) {
+func (s *CoreService) Setup(ctx context.Context, req *SetupRequest) (resp *hcommon.Response, err error) {
+	defer config.RecoverPanicToError("CoreService.Setup", func(e error) {
+		Log(LogLevel_FATAL, LogType_CORE, e.Error())
+		resp = &hcommon.Response{Code: hcommon.ResponseCode_FAILED, Message: e.Error()}
+		err = e
+	})
 	if grpcServer[req.Mode] != nil {
 		return &hcommon.Response{Code: hcommon.ResponseCode_OK, Message: ""}, nil
 	}
-	err := Setup(req, nil)
+	err = Setup(req, nil)
 	code := hcommon.ResponseCode_OK
 	if err != nil {
 		code = hcommon.ResponseCode_FAILED

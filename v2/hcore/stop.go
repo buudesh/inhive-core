@@ -9,7 +9,11 @@ import (
 	hcommon "github.com/buudesh/inhive-core/v2/hcommon"
 )
 
-func (s *CoreService) Stop(ctx context.Context, empty *hcommon.Empty) (*CoreInfoResponse, error) {
+func (s *CoreService) Stop(ctx context.Context, empty *hcommon.Empty) (resp *CoreInfoResponse, err error) {
+	defer config.RecoverPanicToError("CoreService.Stop", func(e error) {
+		Log(LogLevel_FATAL, LogType_CORE, e.Error())
+		resp, err = errorWrapper(MessageType_UNEXPECTED_ERROR, e)
+	})
 	return Stop()
 }
 

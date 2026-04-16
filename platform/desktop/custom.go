@@ -8,7 +8,9 @@ package main
 import "C"
 
 import (
+	"fmt"
 	"runtime"
+	"runtime/debug"
 	"unsafe"
 
 	hcore "github.com/buudesh/inhive-core/v2/hcore"
@@ -33,13 +35,20 @@ func emptyOrErrorC(err error) *C.char {
 }
 
 //export setup
-func setup(baseDir *C.char, workingDir *C.char, tempDir *C.char, mode C.int, listen *C.char, secret *C.char, statusPort C.longlong, debug bool) *C.char {
+func setup(baseDir *C.char, workingDir *C.char, tempDir *C.char, mode C.int, listen *C.char, secret *C.char, statusPort C.longlong, debug_ bool) (result *C.char) {
+	defer func() {
+		if r := recover(); r != nil {
+			msg := fmt.Sprintf("setup panic: %v\n%s", r, string(debug.Stack()))
+			log.Error(msg)
+			result = C.CString(msg)
+		}
+	}()
 	params := hcore.SetupRequest{
 		BasePath:          C.GoString(baseDir),
 		WorkingDir:        C.GoString(workingDir),
 		TempDir:           C.GoString(tempDir),
 		FlutterStatusPort: int64(statusPort),
-		Debug:             bool(debug),
+		Debug:             bool(debug_),
 		Mode:              hcore.SetupMode(mode),
 		Listen:            C.GoString(listen),
 		Secret:            C.GoString(secret),
@@ -57,7 +66,14 @@ func freeString(str *C.char) {
 }
 
 //export start
-func start(configPath *C.char, disableMemoryLimit bool) *C.char {
+func start(configPath *C.char, disableMemoryLimit bool) (result *C.char) {
+	defer func() {
+		if r := recover(); r != nil {
+			msg := fmt.Sprintf("start panic: %v\n%s", r, string(debug.Stack()))
+			log.Error(msg)
+			result = C.CString(msg)
+		}
+	}()
 	ctx := libbox.BaseContext(nil)
 	_, err := hcore.Start(ctx, &hcore.StartRequest{
 		ConfigPath:             C.GoString(configPath),
@@ -68,13 +84,27 @@ func start(configPath *C.char, disableMemoryLimit bool) *C.char {
 }
 
 //export stop
-func stop() *C.char {
+func stop() (result *C.char) {
+	defer func() {
+		if r := recover(); r != nil {
+			msg := fmt.Sprintf("stop panic: %v\n%s", r, string(debug.Stack()))
+			log.Error(msg)
+			result = C.CString(msg)
+		}
+	}()
 	_, err := hcore.Stop()
 	return emptyOrErrorC(err)
 }
 
 //export restart
-func restart(configPath *C.char, disableMemoryLimit bool) *C.char {
+func restart(configPath *C.char, disableMemoryLimit bool) (result *C.char) {
+	defer func() {
+		if r := recover(); r != nil {
+			msg := fmt.Sprintf("restart panic: %v\n%s", r, string(debug.Stack()))
+			log.Error(msg)
+			result = C.CString(msg)
+		}
+	}()
 	ctx := libbox.BaseContext(nil)
 	_, err := hcore.Restart(ctx, &hcore.StartRequest{
 		ConfigPath:             C.GoString(configPath),
@@ -85,13 +115,27 @@ func restart(configPath *C.char, disableMemoryLimit bool) *C.char {
 }
 
 //export GetServerPublicKey
-func GetServerPublicKey() *C.char {
+func GetServerPublicKey() (result *C.char) {
+	defer func() {
+		if r := recover(); r != nil {
+			msg := fmt.Sprintf("GetServerPublicKey panic: %v\n%s", r, string(debug.Stack()))
+			log.Error(msg)
+			result = C.CString(msg)
+		}
+	}()
 	publicKey := hcore.GetGrpcServerPublicKey()
 	return C.CString(string(publicKey))
 }
 
 //export AddGrpcClientPublicKey
-func AddGrpcClientPublicKey(clientPublicKey *C.char) *C.char {
+func AddGrpcClientPublicKey(clientPublicKey *C.char) (result *C.char) {
+	defer func() {
+		if r := recover(); r != nil {
+			msg := fmt.Sprintf("AddGrpcClientPublicKey panic: %v\n%s", r, string(debug.Stack()))
+			log.Error(msg)
+			result = C.CString(msg)
+		}
+	}()
 	clientKey := C.GoBytes(unsafe.Pointer(clientPublicKey), C.int(len(C.GoString(clientPublicKey))))
 	err := hcore.AddGrpcClientPublicKey(clientKey)
 	return emptyOrErrorC(err)
@@ -99,5 +143,11 @@ func AddGrpcClientPublicKey(clientPublicKey *C.char) *C.char {
 
 //export closeGrpc
 func closeGrpc(mode C.int) {
+	defer func() {
+		if r := recover(); r != nil {
+			msg := fmt.Sprintf("closeGrpc panic: %v\n%s", r, string(debug.Stack()))
+			log.Error(msg)
+		}
+	}()
 	hcore.Close(hcore.SetupMode(mode))
 }

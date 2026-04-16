@@ -68,11 +68,19 @@ func (h *InhiveInstance) readStatus(prev *SystemInfo) *SystemInfo {
 	return &message
 }
 
-func (s *CoreService) GetSystemInfo(ctx context.Context, req *hcommon.Empty) (*SystemInfo, error) {
+func (s *CoreService) GetSystemInfo(ctx context.Context, req *hcommon.Empty) (resp *SystemInfo, err error) {
+	defer config.RecoverPanicToError("CoreService.GetSystemInfo", func(e error) {
+		Log(LogLevel_FATAL, LogType_CORE, e.Error())
+		err = e
+	})
 	return static.readStatus(nil), nil
 
 }
-func (s *CoreService) GetSystemInfoStream(req *hcommon.Empty, stream grpc.ServerStreamingServer[SystemInfo]) error {
+func (s *CoreService) GetSystemInfoStream(req *hcommon.Empty, stream grpc.ServerStreamingServer[SystemInfo]) (err error) {
+	defer config.RecoverPanicToError("CoreService.GetSystemInfoStream", func(e error) {
+		Log(LogLevel_FATAL, LogType_CORE, e.Error())
+		err = e
+	})
 	return static.GetSystemInfo(stream)
 
 }
@@ -127,7 +135,12 @@ func (h *InhiveInstance) GetSystemInfo(stream grpc.ServerStreamingServer[SystemI
 
 }
 
-func (s *CoreService) SelectOutbound(ctx context.Context, in *SelectOutboundRequest) (*hcommon.Response, error) {
+func (s *CoreService) SelectOutbound(ctx context.Context, in *SelectOutboundRequest) (resp *hcommon.Response, err error) {
+	defer config.RecoverPanicToError("CoreService.SelectOutbound", func(e error) {
+		Log(LogLevel_FATAL, LogType_CORE, e.Error())
+		resp = &hcommon.Response{Code: hcommon.ResponseCode_FAILED, Message: e.Error()}
+		err = e
+	})
 	return static.SelectOutbound(in)
 }
 
@@ -178,11 +191,21 @@ func (h *InhiveInstance) SelectOutbound(in *SelectOutboundRequest) (*hcommon.Res
 	}, nil
 }
 
-func (s *CoreService) UrlTest(ctx context.Context, in *UrlTestRequest) (*hcommon.Response, error) {
+func (s *CoreService) UrlTest(ctx context.Context, in *UrlTestRequest) (resp *hcommon.Response, err error) {
+	defer config.RecoverPanicToError("CoreService.UrlTest", func(e error) {
+		Log(LogLevel_FATAL, LogType_CORE, e.Error())
+		resp = &hcommon.Response{Code: hcommon.ResponseCode_FAILED, Message: e.Error()}
+		err = e
+	})
 	return static.UrlTest(in)
 }
 
-func (s *CoreService) UrlTestActive(ctx context.Context, in *hcommon.Empty) (*hcommon.Response, error) {
+func (s *CoreService) UrlTestActive(ctx context.Context, in *hcommon.Empty) (resp *hcommon.Response, err error) {
+	defer config.RecoverPanicToError("CoreService.UrlTestActive", func(e error) {
+		Log(LogLevel_FATAL, LogType_CORE, e.Error())
+		resp = &hcommon.Response{Code: hcommon.ResponseCode_FAILED, Message: e.Error()}
+		err = e
+	})
 
 	return static.UrlTestActive()
 }

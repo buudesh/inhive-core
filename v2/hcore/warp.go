@@ -3,9 +3,15 @@ package hcore
 
 import (
 	"context"
+
+	"github.com/buudesh/inhive-core/v2/config"
 )
 
-func (s *CoreService) GenerateWarpConfig(ctx context.Context, in *GenerateWarpConfigRequest) (*WarpGenerationResponse, error) {
+func (s *CoreService) GenerateWarpConfig(ctx context.Context, in *GenerateWarpConfigRequest) (resp *WarpGenerationResponse, err error) {
+	defer config.RecoverPanicToError("CoreService.GenerateWarpConfig", func(e error) {
+		Log(LogLevel_FATAL, LogType_CORE, e.Error())
+		err = e
+	})
 	return GenerateWarpConfig(in)
 }
 

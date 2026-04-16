@@ -76,14 +76,10 @@ func Setup(params *SetupRequest, platformInterface libbox.PlatformInterface) err
 	}
 	factory, err := log.New(
 		log.Options{
-			DefaultWriter: defaultWriter,
-			BaseTime:      time.Now(),
-			Observable:    true,
-			// Options: option.LogOptions{
-			// 	Disabled: false,
-			// 	Level:    "trace",
-			// 	Output:   "stdout",
-			// },
+			DefaultWriter:  defaultWriter,
+			BaseTime:       time.Now(),
+			Observable:     true,
+			PlatformWriter: &LogInterface{},
 		})
 	static.CoreLogFactory = factory
 
@@ -134,6 +130,9 @@ func StartGrpcServer(listenAddressG string, service string) (*grpc.Server, error
 	}
 	log.Info("Server listening on %s", listenAddressG)
 	go func() {
+		defer config.RecoverPanicToError("StartGrpcServer.Serve", func(err error) {
+			log.Error(err.Error())
+		})
 		if err := s.Serve(lis); err != nil {
 			log.Error("failed to serve: %v", err)
 		}
@@ -246,7 +245,13 @@ func StartGrpcServerByMode(listenAddressG string, mode SetupMode) (*grpc.Server,
 }
 
 // GetGrpcServerPublicKey returns the gRPC server's public key.
+// Returns nil when running in insecure mode (mode 3/4) where certpair is not initialized.
 func GetGrpcServerPublicKey() []byte {
+	mu.Lock()
+	defer mu.Unlock()
+	if certpair == nil {
+		return nil
+	}
 	return certpair.Certificate
 }
 

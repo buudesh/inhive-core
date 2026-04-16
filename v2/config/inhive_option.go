@@ -140,7 +140,7 @@ func DefaultInhiveOptions() *InhiveOptions {
 			BypassLAN:              false,
 			AllowConnectionFromLAN: false,
 		},
-		LogLevel: "warn",
+		LogLevel: "debug",
 		// LogFile:        "/dev/null",
 		LogFile:        "data/box.log",
 		Region:         "other",

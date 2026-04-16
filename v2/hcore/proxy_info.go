@@ -179,11 +179,19 @@ func TrimTagName(tag string) string {
 	return strings.Trim(strings.Split(tag, "§")[0], " ")
 }
 
-func (s *CoreService) OutboundsInfo(req *hcommon.Empty, stream grpc.ServerStreamingServer[OutboundGroupList]) error {
+func (s *CoreService) OutboundsInfo(req *hcommon.Empty, stream grpc.ServerStreamingServer[OutboundGroupList]) (err error) {
+	defer config.RecoverPanicToError("CoreService.OutboundsInfo", func(e error) {
+		Log(LogLevel_FATAL, LogType_CORE, e.Error())
+		err = e
+	})
 	return static.AllProxiesInfoStream(stream, false)
 }
 
-func (s *CoreService) MainOutboundsInfo(req *hcommon.Empty, stream grpc.ServerStreamingServer[OutboundGroupList]) error {
+func (s *CoreService) MainOutboundsInfo(req *hcommon.Empty, stream grpc.ServerStreamingServer[OutboundGroupList]) (err error) {
+	defer config.RecoverPanicToError("CoreService.MainOutboundsInfo", func(e error) {
+		Log(LogLevel_FATAL, LogType_CORE, e.Error())
+		err = e
+	})
 	return static.AllProxiesInfoStream(stream, true)
 }
 

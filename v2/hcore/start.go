@@ -18,7 +18,11 @@ import (
 	"github.com/sagernet/sing/service"
 )
 
-func (s *CoreService) Start(ctx context.Context, in *StartRequest) (*CoreInfoResponse, error) {
+func (s *CoreService) Start(ctx context.Context, in *StartRequest) (resp *CoreInfoResponse, err error) {
+	defer config.RecoverPanicToError("CoreService.Start", func(e error) {
+		Log(LogLevel_FATAL, LogType_CORE, e.Error())
+		resp, err = errorWrapper(MessageType_UNEXPECTED_ERROR, e)
+	})
 	return Start(static.BaseContext, in)
 }
 
@@ -26,7 +30,11 @@ func Start(ctx context.Context, in *StartRequest) (*CoreInfoResponse, error) {
 	return StartService(ctx, in)
 }
 
-func (s *CoreService) StartService(ctx context.Context, in *StartRequest) (*CoreInfoResponse, error) {
+func (s *CoreService) StartService(ctx context.Context, in *StartRequest) (resp *CoreInfoResponse, err error) {
+	defer config.RecoverPanicToError("CoreService.StartService", func(e error) {
+		Log(LogLevel_FATAL, LogType_CORE, e.Error())
+		resp, err = errorWrapper(MessageType_UNEXPECTED_ERROR, e)
+	})
 	return StartService(ctx, in)
 }
 

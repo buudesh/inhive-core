@@ -10,7 +10,11 @@ import (
 	"github.com/sagernet/sing-box/log"
 )
 
-func (s *CoreService) Restart(ctx context.Context, in *StartRequest) (*CoreInfoResponse, error) {
+func (s *CoreService) Restart(ctx context.Context, in *StartRequest) (resp *CoreInfoResponse, err error) {
+	defer config.RecoverPanicToError("CoreService.Restart", func(e error) {
+		Log(LogLevel_FATAL, LogType_CORE, e.Error())
+		resp, err = errorWrapper(MessageType_UNEXPECTED_ERROR, e)
+	})
 	return Restart(static.BaseContext, in)
 }
 

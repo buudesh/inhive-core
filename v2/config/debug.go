@@ -33,3 +33,14 @@ func DeferPanicToError(name string, err func(error)) {
 		<-time.After(5 * time.Second)
 	}
 }
+
+// RecoverPanicToError is a non-blocking variant of DeferPanicToError intended
+// for hot paths: gRPC per-RPC handlers, cgo //export wrappers and long-running
+// goroutines. Unlike DeferPanicToError it does not sleep 5s after recovery —
+// callers receive the wrapped error immediately so the RPC/call can return.
+func RecoverPanicToError(name string, err func(error)) {
+	if r := recover(); r != nil {
+		s := fmt.Errorf("%s panic: %s\n%s", name, r, string(debug.Stack()))
+		err(s)
+	}
+}

@@ -6,13 +6,23 @@ package main
 import "C"
 
 import (
+	"fmt"
+	"runtime/debug"
 	"unsafe"
 
 	"github.com/buudesh/inhive-core/cmd"
+	"github.com/sagernet/sing-box/log"
 )
 
 //export parseCli
-func parseCli(argc C.int, argv **C.char) *C.char {
+func parseCli(argc C.int, argv **C.char) (result *C.char) {
+	defer func() {
+		if r := recover(); r != nil {
+			msg := fmt.Sprintf("parseCli panic: %v\n%s", r, string(debug.Stack()))
+			log.Error(msg)
+			result = C.CString(msg)
+		}
+	}()
 	args := make([]string, argc)
 	for i := 0; i < int(argc); i++ {
 		// fmt.Println("parseCli", C.GoString(*argv))

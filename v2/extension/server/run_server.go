@@ -10,6 +10,7 @@ import (
 	"sync"
 	"syscall"
 
+	"github.com/buudesh/inhive-core/v2/config"
 	hcore "github.com/buudesh/inhive-core/v2/hcore"
 	"github.com/buudesh/inhive-core/v2/hutils"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
@@ -89,6 +90,9 @@ func runWebserver(grpcServer *grpc.Server) {
 
 	go func() {
 		defer wg.Done()
+		defer config.RecoverPanicToError("run_server.grpcWebTLS", func(err error) {
+			log.Println(err.Error())
+		})
 		hutils.GenerateCertificateFile("data/cert/server-cert.pem", "data/cert/server-key.pem", true, true)
 		if err := rpcWebServer.ListenAndServeTLS("cert/server-cert.pem", "cert/server-key.pem"); err != nil && err != http.ErrServerClosed {
 			// if err := rpcWebServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {

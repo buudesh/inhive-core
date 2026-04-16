@@ -4,13 +4,14 @@ package config
 import (
 	"context"
 	"encoding/base64"
-	"net/url"
+	"fmt"
 	"math/rand"
 	"net"
+	"net/url"
+	"os"
 	"strings"
 	sync "sync"
 	"time"
-
 )
 
 var (
@@ -45,6 +46,9 @@ func getIPs(domains ...string) []string {
 		wg.Add(1)
 		go func(domain string) {
 			defer wg.Done()
+			defer RecoverPanicToError("getIPs.lookup", func(err error) {
+				fmt.Fprintln(os.Stderr, err.Error())
+			})
 			ips, err := net.DefaultResolver.LookupIP(ctx, "ip", domain)
 			if err != nil {
 				return
@@ -59,6 +63,9 @@ func getIPs(domains ...string) []string {
 	}
 
 	go func() {
+		defer RecoverPanicToError("getIPs.waitClose", func(err error) {
+			fmt.Fprintln(os.Stderr, err.Error())
+		})
 		wg.Wait()
 		close(resChan)
 	}()

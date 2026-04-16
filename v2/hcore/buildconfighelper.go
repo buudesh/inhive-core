@@ -44,7 +44,12 @@ func BuildConfig(ctx context.Context, in *StartRequest) (*option.Options, error)
 
 }
 
-func (s *CoreService) Parse(ctx context.Context, in *ParseRequest) (*ParseResponse, error) {
+func (s *CoreService) Parse(ctx context.Context, in *ParseRequest) (resp *ParseResponse, err error) {
+	defer config.RecoverPanicToError("CoreService.Parse", func(e error) {
+		Log(LogLevel_FATAL, LogType_CORE, e.Error())
+		resp = &ParseResponse{ResponseCode: hcommon.ResponseCode_FAILED, Message: e.Error()}
+		err = e
+	})
 	return Parse(libbox.FromContext(ctx, nil), in)
 }
 
@@ -82,7 +87,11 @@ func Parse(ctx context.Context, in *ParseRequest) (*ParseResponse, error) {
 	}, err
 }
 
-func (s *CoreService) ChangeInhiveSettings(ctx context.Context, in *ChangeInhiveSettingsRequest) (*CoreInfoResponse, error) {
+func (s *CoreService) ChangeInhiveSettings(ctx context.Context, in *ChangeInhiveSettingsRequest) (resp *CoreInfoResponse, err error) {
+	defer config.RecoverPanicToError("CoreService.ChangeInhiveSettings", func(e error) {
+		Log(LogLevel_FATAL, LogType_CORE, e.Error())
+		err = e
+	})
 	return ChangeInhiveSettings(in, true)
 }
 
@@ -139,7 +148,11 @@ func ChangeInhiveSettings(in *ChangeInhiveSettingsRequest, insert bool) (*CoreIn
 	return &CoreInfoResponse{}, nil
 }
 
-func (s *CoreService) GenerateConfig(ctx context.Context, in *GenerateConfigRequest) (*GenerateConfigResponse, error) {
+func (s *CoreService) GenerateConfig(ctx context.Context, in *GenerateConfigRequest) (resp *GenerateConfigResponse, err error) {
+	defer config.RecoverPanicToError("CoreService.GenerateConfig", func(e error) {
+		Log(LogLevel_FATAL, LogType_CORE, e.Error())
+		err = e
+	})
 	return GenerateConfig(libbox.FromContext(ctx, nil), in)
 }
 
