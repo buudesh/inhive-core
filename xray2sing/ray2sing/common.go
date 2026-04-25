@@ -62,7 +62,7 @@ func getTLSOptions(decoded map[string]string) T.OutboundTLSOptionsContainer {
 		Insecure:   insecure == "true" || insecure == "1",
 		DisableSNI: getOneOfN(decoded, "", "nosni") != "",
 		ECH:        ECHOpts,
-		// TLSTricks:  getTricksOptions(decoded),
+		TLSTricks:  getTricksOptions(decoded),
 	}
 	if fp != "" && !tlsOptions.DisableSNI {
 		tlsOptions.UTLS = &option.OutboundUTLSOptions{

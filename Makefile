@@ -56,6 +56,39 @@ android: lib_install
 		-target=android/arm,android/arm64,android/amd64 \
 		-o $(BINDIR)/$(LIBNAME).aar \
 		github.com/sagernet/sing-box/experimental/libbox ./platform/mobile
+	$(MAKE) android-deploy
+
+# Deploy AAR to app/android/app/libs/ + assert 3 ABI present.
+# Defends against the recurring incident where a local single-ABI dev build
+# overwrites the canonical 3-ABI release in the deploy path, silently
+# producing APKs that crash on arm devices with UnsatisfiedLinkError.
+.PHONY: android-deploy
+android-deploy:
+	@if [ ! -f $(BINDIR)/$(LIBNAME).aar ]; then \
+		echo "ERROR: $(BINDIR)/$(LIBNAME).aar not found — run 'make android' first"; \
+		exit 1; \
+	fi
+	@ABI_COUNT=$$(unzip -p $(BINDIR)/$(LIBNAME).aar | strings | grep -c '^libinhive-core\.so$$' || true); \
+	ABI_COUNT=$$(unzip -l $(BINDIR)/$(LIBNAME).aar | grep -E 'jni/.*libinhive-core\.so' | wc -l); \
+	if [ "$$ABI_COUNT" -ne 3 ]; then \
+		echo "ERROR: Source AAR has $$ABI_COUNT ABI(s), expected 3 (arm64-v8a + armeabi-v7a + x86_64). Refusing to deploy."; \
+		unzip -l $(BINDIR)/$(LIBNAME).aar | grep 'libinhive-core\.so' || true; \
+		exit 1; \
+	fi
+	@cp $(BINDIR)/$(LIBNAME).aar ../app/android/app/libs/$(LIBNAME).aar
+	@DEPLOYED_ABIS=$$(unzip -l ../app/android/app/libs/$(LIBNAME).aar | grep -E 'jni/.*libinhive-core\.so' | wc -l); \
+	if [ "$$DEPLOYED_ABIS" -ne 3 ]; then \
+		echo "ERROR: Deployed AAR has $$DEPLOYED_ABIS ABI(s) after copy — filesystem issue?"; \
+		exit 1; \
+	fi
+	@SRC_HASH=$$(sha256sum $(BINDIR)/$(LIBNAME).aar | cut -d' ' -f1); \
+	DST_HASH=$$(sha256sum ../app/android/app/libs/$(LIBNAME).aar | cut -d' ' -f1); \
+	if [ "$$SRC_HASH" != "$$DST_HASH" ]; then \
+		echo "ERROR: SHA256 mismatch source vs deploy"; \
+		exit 1; \
+	fi
+	@echo "OK AAR deployed: 3 ABIs verified, SHA256 match"
+	@unzip -l ../app/android/app/libs/$(LIBNAME).aar | grep -E 'jni/.*libinhive-core\.so'
 
 ios-full: lib_install
 	gomobile bind -v  -target ios,iossimulator,tvos,tvossimulator,macos -libname=inhive-core -tags=$(TAGS),$(IOS_ADD_TAGS) -trimpath -ldflags="$(LDFLAGS)" -o $(BINDIR)/$(PRODUCT_NAME).xcframework github.com/sagernet/sing-box/experimental/libbox ./platform/mobile 
