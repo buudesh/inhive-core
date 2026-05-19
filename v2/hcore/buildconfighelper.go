@@ -35,6 +35,13 @@ func BuildConfig(ctx context.Context, in *StartRequest) (*option.Options, error)
 
 	readOpt := &config.ReadOptions{Content: in.ConfigContent, Path: in.ConfigPath}
 	if !in.EnableRawConfig {
+		// S3.2 Phase A (2026-05-19) — assert invariant. All hot-path writers
+		// (Flutter bridge.dart, mobile.go, standalone.go) send EnableRawConfig=true.
+		// The InhiveOptions translation layer (~3000 LOC) is deprecated and will
+		// be deleted in Phase B. If this branch is ever hit, the caller is broken
+		// and must be fixed *before* Phase B ships — log loudly so the regression
+		// is visible in journalctl / device logs.
+		Log(LogLevel_ERROR, LogType_CORE, "S3.2.A.ASSERT: StartRequest.EnableRawConfig=false — falling back to legacy InhiveOptions translation. Caller must be fixed before Phase B (see project_enable_raw_config.md).")
 		return config.BuildConfig(ctx, static.InhiveOptions, readOpt)
 	}
 	return config.ReadSingOptions(ctx, readOpt)
