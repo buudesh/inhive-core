@@ -23,7 +23,7 @@ require (
 )
 
 require (
-	filippo.io/edwards25519 v1.1.0 // indirect
+	filippo.io/edwards25519 v1.1.1 // indirect
 	github.com/AdguardTeam/golibs v0.35.11 // indirect
 	github.com/DataDog/zstd v1.4.1 // indirect
 	github.com/akutz/memconn v0.1.0 // indirect
