@@ -1,0 +1,41 @@
+# Dependabot configuration for inhive-core (Go DLL/AAR/Framework).
+# Reference: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+#
+# Cadence: weekly Mon 06:00 UTC. Matches dependency_policy.md update_cadence.
+
+version: 2
+
+updates:
+  # Go modules — main source of supply-chain risk.
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    groups:
+      # Group minor + patch updates to reduce PR noise; majors stay separate.
+      go-minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
+
+  # GitHub Actions used in workflows (build.yml, release.yml).
+  # Pin-by-SHA discipline applied via _actions_pin_summary_2026_05_19.md;
+  # Dependabot will propose tag bumps which we accept + re-pin manually.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(ci)"
+      include: "scope"
